@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d3b3e">
+  <meta name="description" content="Suivi personnel des dépenses, local et hors ligne.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>Mon Budget</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-lockup"><div class="brand-mark">₣</div><div><p class="eyebrow">SUIVI PERSONNEL</p><h1>Mon Budget</h1></div></div>
+      <button id="installBtn" class="icon-button hidden" type="button" aria-label="Installer l'application">＋</button>
+    </header>
+
+    <main>
+      <section class="hero-card" aria-labelledby="dayTitle">
+        <div class="hero-top"><div><p class="eyebrow light">AUJOURD'HUI</p><h2 id="dayTitle">—</h2></div><span id="limitStatus" class="status-pill">PLAFOND</span></div>
+        <div class="hero-number"><span id="todayCapped">0</span><small>FCFA dépensés</small></div>
+        <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+        <div class="hero-bottom"><div><span class="metric-label">Plafond</span><strong id="limitAmount">2 500 FCFA</strong></div><div class="metric-right"><span class="metric-label">Restant</span><strong id="remainingAmount">2 500 FCFA</strong></div></div>
+        <div id="overrunMessage" class="overrun-message hidden"></div>
+      </section>
+
+      <section class="quick-stats"><div class="stat-card"><span>Total général</span><strong id="todayTotal">0 FCFA</strong><small>plafonnées + hors plafond</small></div><div class="stat-card accent"><span>Achats du jour</span><strong id="todayCount">0</strong><small>dépense(s) enregistrée(s)</small></div></section>
+
+      <section class="section-block add-section" aria-labelledby="addTitle"><div class="section-heading"><div><p class="eyebrow">NOUVELLE ÉCRITURE</p><h2 id="addTitle">Ajouter une dépense</h2></div></div>
+        <form id="expenseForm" class="expense-form">
+          <label>Description<input id="description" name="description" type="text" placeholder="Ex. Déjeuner" maxlength="80" required></label>
+          <div class="form-grid"><label>Montant (FCFA)<input id="amount" name="amount" type="number" inputmode="numeric" min="1" step="1" placeholder="0" required></label><label>Catégorie<select id="category" name="category"><option>Alimentation</option><option>Transport</option><option>Maison</option><option>Santé</option><option>Loisirs</option><option>Communication</option><option>Autre</option></select></label></div>
+          <div class="form-grid"><label>Date<input id="date" name="date" type="date" required></label><label>Heure<input id="time" name="time" type="time" required></label></div>
+          <fieldset><legend>Type de dépense</legend><div class="choice-row"><label class="choice"><input type="radio" name="type" value="capped" checked><span>Dépense plafonnée</span></label><label class="choice"><input type="radio" name="type" value="uncapped"><span>Dépense hors plafond</span></label></div></fieldset>
+          <button class="primary-button" type="submit">Enregistrer la dépense <span>→</span></button>
+        </form>
+      </section>
+
+      <section class="section-block" aria-labelledby="historyTitle"><div class="section-heading"><div><p class="eyebrow">VUE D'ENSEMBLE</p><h2 id="historyTitle">Historique</h2></div><button id="exportBtn" class="text-button" type="button">Exporter CSV</button></div><div id="historyList" class="history-list"></div></section>
+
+      <section class="section-block summaries" aria-labelledby="summaryTitle"><div class="section-heading"><div><p class="eyebrow">ANALYSE</p><h2 id="summaryTitle">Résumés</h2></div></div><div class="summary-tabs"><button class="tab active" data-summary="week" type="button">7 derniers jours</button><button class="tab" data-summary="month" type="button">Mois en cours</button></div><div id="summaryContent"></div></section>
+
+      <section class="section-block settings" aria-labelledby="settingsTitle"><div class="section-heading"><div><p class="eyebrow">PRÉFÉRENCES</p><h2 id="settingsTitle">Mon plafond</h2></div></div><form id="settingsForm" class="settings-form"><label>Plafond quotidien (FCFA)<input id="dailyLimit" type="number" min="0" step="100" required></label><button class="secondary-button" type="submit">Enregistrer le plafond</button></form><p class="privacy-note">Vos données restent sur cet appareil. Aucun compte, aucun serveur, aucune publicité.</p></section>
+    </main>
+    <footer><span>Mon Budget · local & hors ligne</span><span id="storageStatus">Stockage local actif</span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="editDialog"><form method="dialog" id="editForm" class="dialog-card"><div class="section-heading"><div><p class="eyebrow">MODIFIER</p><h2>Modifier la dépense</h2></div><button value="cancel" class="close-button" aria-label="Fermer">×</button></div><input type="hidden" id="editId"><label>Description<input id="editDescription" required maxlength="80"></label><div class="form-grid"><label>Montant (FCFA)<input id="editAmount" type="number" min="1" required></label><label>Catégorie<select id="editCategory"><option>Alimentation</option><option>Transport</option><option>Maison</option><option>Santé</option><option>Loisirs</option><option>Communication</option><option>Autre</option></select></label></div><div class="form-grid"><label>Date<input id="editDate" type="date" required></label><label>Heure<input id="editTime" type="time" required></label></div><fieldset><legend>Type de dépense</legend><div class="choice-row"><label class="choice"><input type="radio" name="editType" value="capped"><span>Dépense plafonnée</span></label><label class="choice"><input type="radio" name="editType" value="uncapped"><span>Dépense hors plafond</span></label></div></fieldset><div class="dialog-actions"><button value="cancel" class="secondary-button">Annuler</button><button id="saveEditBtn" value="default" class="primary-button">Enregistrer</button></div></form></dialog>
+  <script src="app.js"></script>
+</body>
+</html>

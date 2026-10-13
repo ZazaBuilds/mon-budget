@@ -1,0 +1,12 @@
+{
+  "name": "Mon Budget",
+  "short_name": "Mon Budget",
+  "description": "Suivi personnel des dépenses, local et hors ligne.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f5f5ef",
+  "theme_color": "#0d3b3e",
+  "lang": "fr-FR",
+  "orientation": "portrait",
+  "icons": [{"src":"icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
